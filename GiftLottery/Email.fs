@@ -8,8 +8,10 @@ open System.Text
 
 module Email =
     
+    /// Email account sending the emails.
     let private fromEmail = ConfigurationManager.AppSettings.["fromEmail"]        
 
+    /// Display name of the account sending the emails.
     let private fromDisplayName = ConfigurationManager.AppSettings.["fromDisplayName"]
 
     let private smtpClient =
@@ -21,7 +23,7 @@ module Email =
             elif arg.Error <> null then
                 arg.Error.Message |> cprintfn ConsoleColor.Red "An error occured while sending email: %s"
             else
-                cprintfn ConsoleColor.Green "Email sent!"
+                ()
 
         client.SendCompleted.Add processCompleted
         client
@@ -37,14 +39,19 @@ module Email =
         msg.BodyEncoding <- encoding
         msg.IsBodyHtml <- false
         msg.Body <- sprintf """Bonjour %s,
-            
-            Voici le résultat du tirage au sort automatique :
-            Tu devras faire un cadeau à %s.
 
-            Bonne journée.""" toParticipant.Name forParticipant.Name
+Voici le résultat du tirage au sort automatique : tu devras faire un cadeau à %s.
+
+Bonne journée.""" toParticipant.Name forParticipant.Name
+        
         msg
 
-    let send fromParticipant toParticipant =
+    /// <summary>
+    /// Sends a message to a participant indicating to whom make a present.
+    /// </summary>
+    /// <param name="giver">The one making the present.</param>
+    /// <param name="receiver">The one receiving the present.</param>
+    let send giver receiver =
         use client = smtpClient
-        let msg = message fromParticipant toParticipant
+        let msg = message giver receiver
         client.Send(msg)
