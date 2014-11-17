@@ -1,4 +1,4 @@
-relre:/bin/
-relre:/obj/
-relre:\.suo$
-relre:\.Cache$
+GiftLottery/bin/*
+GiftLottery/obj/*
+*.suo
+*.Cache

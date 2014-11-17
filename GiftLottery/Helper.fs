@@ -8,10 +8,10 @@ module Helper =
     let private cprint writer c =
         Printf.kprintf
             (fun s ->
-                let orig = Console.BackgroundColor
-                Console.BackgroundColor <- c
+                let orig = Console.ForegroundColor
+                Console.ForegroundColor <- c
                 writer(s)
-                Console.BackgroundColor <- orig)
+                Console.ForegroundColor <- orig)
 
     /// <summary>
     /// Prints on the console, without line return.
