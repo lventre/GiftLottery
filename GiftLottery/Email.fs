@@ -43,7 +43,6 @@ module Email =
 Voici le résultat du tirage au sort automatique : tu devras faire un cadeau à %s.
 
 Bonne journée.""" toParticipant.Name forParticipant.Name
-        
         msg
 
     /// <summary>
@@ -52,6 +51,5 @@ Bonne journée.""" toParticipant.Name forParticipant.Name
     /// <param name="giver">The one making the present.</param>
     /// <param name="receiver">The one receiving the present.</param>
     let send giver receiver =
-        use client = smtpClient
         let msg = message giver receiver
-        client.Send(msg)
+        smtpClient.Send(msg)
