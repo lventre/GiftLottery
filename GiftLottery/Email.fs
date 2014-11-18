@@ -6,15 +6,17 @@ open System.Configuration
 open System.Net.Mail
 open System.Text
 
-module Email =
+/// The type responsible for generating and sending the email messages.
+type Email () =
     
     /// Email account sending the emails.
-    let private fromEmail = ConfigurationManager.AppSettings.["fromEmail"]        
+    let fromEmail = ConfigurationManager.AppSettings.["fromEmail"]        
 
     /// Display name of the account sending the emails.
-    let private fromDisplayName = ConfigurationManager.AppSettings.["fromDisplayName"]
+    let fromDisplayName = ConfigurationManager.AppSettings.["fromDisplayName"]
 
-    let private smtpClient =
+    /// The SMTP client
+    let smtpClient =
         let client = new SmtpClient()
 
         let processCompleted (arg:AsyncCompletedEventArgs) =
@@ -28,7 +30,12 @@ module Email =
         client.SendCompleted.Add processCompleted
         client
 
-    let private message toParticipant forParticipant =
+    /// <summary>
+    /// Generates the mail message
+    /// </summary>
+    /// <param name="toParticipant">Participant giving the present, hence receiving the email.</param>
+    /// <param name="forParticipant">Participant receiving the present.</param>
+    let message toParticipant forParticipant =
         let encoding = Encoding.UTF8
         let fromAddr = MailAddress(fromEmail, fromDisplayName, encoding)
         let toAddr = MailAddress(toParticipant.Email, toParticipant.Name, encoding)
@@ -50,6 +57,13 @@ Bonne journée.""" toParticipant.Name forParticipant.Name
     /// </summary>
     /// <param name="giver">The one making the present.</param>
     /// <param name="receiver">The one receiving the present.</param>
-    let send giver receiver =
+    member this.Send (giver, receiver): unit =
         let msg = message giver receiver
+        cprintfn ConsoleColor.DarkGreen "\tSending message to %s" giver.Name
         smtpClient.Send(msg)
+
+    interface IDisposable with
+
+        /// Dispose of the SMTP client.
+        member this.Dispose(): unit = 
+            smtpClient.Dispose()

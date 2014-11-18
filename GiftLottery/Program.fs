@@ -6,7 +6,8 @@ open System
 module Program =
 
     /// Read the participants list from the CSV file
-    let readParticipants =
+    let participants =
+        cprintfn ConsoleColor.DarkYellow "Reading the participants list..."
         let csv = new CsvProvider<"Participants.csv", ";", HasHeaders = true>()
         [ for r in csv.Rows do
             yield { Email = r.Email.Trim(); Name = r.Name.Trim() } ]
@@ -14,16 +15,12 @@ module Program =
         
     [<EntryPoint>]
     let main argv = 
-        let participants = readParticipants
-        printfn "%A" participants
-
+        cprintfn ConsoleColor.DarkYellow "Shuffling..."
         let shuffled = Shuffle.shuffle participants
 
-        cprintfn ConsoleColor.DarkGreen "Shuffling..."
-        printfn "%A" shuffled
+        cprintfn ConsoleColor.DarkYellow "Sending the results..."
+        use email = new Email()
+        Array.iter2 (fun itm1 itm2 -> email.Send (itm1, itm2)) participants shuffled
 
-        cprintfn ConsoleColor.DarkGreen "Sending the results..."
-        Array.iter2 (fun itm1 itm2 -> Email.send itm1 itm2) participants shuffled
-
-        cprintfn ConsoleColor.DarkGreen "Done..."
+        cprintfn ConsoleColor.DarkYellow "Done..."
         0
