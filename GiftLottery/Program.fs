@@ -22,5 +22,8 @@ module Program =
         use email = new Email()
         Array.iter2 (fun itm1 itm2 -> email.Send (itm1, itm2)) participants shuffled
 
-        cprintfn ConsoleColor.DarkYellow "Done..."
+        cprintfn ConsoleColor.DarkYellow "Done!"
+        
+        cprintfn ConsoleColor.Gray "\nPlease press any key to exit..."
+        Console.ReadKey() |> ignore
         0
