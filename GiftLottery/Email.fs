@@ -1,4 +1,4 @@
-﻿namespace GitHub.Lventre.GitLottery
+﻿namespace GitHub.Lventre.GiftLottery
 
 open System
 open System.ComponentModel
